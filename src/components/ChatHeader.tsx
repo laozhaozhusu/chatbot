@@ -56,7 +56,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
         </div>
       </div>
 
-      <div className="social-links">
+      {/* <div className="social-links">
         <a href="#" className="social-icon wechat" title="微信">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
             <path d="M8.5 9.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm7 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
@@ -73,7 +73,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8-1.6 7.52c-.12.54-.44.67-.89.42l-2.46-1.82-1.19 1.14c-.13.13-.24.24-.49.24l.17-2.44 4.47-4.04c.19-.17-.04-.27-.3-.1L9.39 13.3l-2.44-.77c-.53-.17-.54-.53.11-.78l9.57-3.69c.44-.17.83.1.68.78z" />
           </svg>
         </a>
-      </div>
+      </div> */}
     </div>
   );
 };
