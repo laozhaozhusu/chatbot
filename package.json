@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "serve": "open http://localhost:8080/test.html && python3 -m http.server 8080",
-    "serve:simple": "open http://localhost:8080/test-simple.html && python3 -m http.server 8080",
+    "serve:simple": "pnpm run build && open http://localhost:8080/test-simple.html && python3 -m http.server 8080",
     "serve:iframe": "open http://localhost:8080/test-iframe-isolation.html && python3 -m http.server 8080",
     "test": "python3 -m http.server 8080"
   },
