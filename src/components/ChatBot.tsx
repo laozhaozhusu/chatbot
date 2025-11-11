@@ -24,6 +24,9 @@ const ChatBot: React.FC<ChatBotProps> = ({ onClose }) => {
     setActiveTab,
     handleSend,
     handleQuickAction,
+    handleImageUpload,
+    handleVideoUpload,
+    handleFileUpload,
   } = useChatBot();
 
   return (
@@ -38,6 +41,9 @@ const ChatBot: React.FC<ChatBotProps> = ({ onClose }) => {
         value={inputValue}
         onChange={setInputValue}
         onSend={handleSend}
+        onImageUpload={handleImageUpload}
+        onVideoUpload={handleVideoUpload}
+        onFileUpload={handleFileUpload}
       />
     </div>
   );

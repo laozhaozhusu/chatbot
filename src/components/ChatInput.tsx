@@ -1,15 +1,103 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import type { ChatInputProps } from "./types";
+import EmojiPicker from "./EmojiPicker";
 
 /**
  * 聊天输入组件
  * 职责：处理用户输入、工具按钮和发送消息
  */
-const ChatInput: React.FC<ChatInputProps> = ({ value, onChange, onSend }) => {
+const ChatInput: React.FC<ChatInputProps> = ({
+  value,
+  onChange,
+  onSend,
+  onImageUpload,
+  onVideoUpload,
+  onFileUpload,
+}) => {
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const emojiButtonRef = useRef<HTMLButtonElement>(null);
+
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       onSend();
+    }
+  };
+
+  /**
+   * 处理表情选择
+   */
+  const handleEmojiSelect = (emoji: string) => {
+    onChange(value + emoji);
+  };
+
+  /**
+   * 处理图片上传
+   */
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && onImageUpload) {
+      // 验证文件类型
+      if (!file.type.startsWith("image/")) {
+        alert("请选择图片文件");
+        return;
+      }
+      // 验证文件大小（最大10MB）
+      if (file.size > 10 * 1024 * 1024) {
+        alert("图片大小不能超过10MB");
+        return;
+      }
+      onImageUpload(file);
+    }
+    // 重置input值，允许重复选择同一文件
+    if (e.target) {
+      e.target.value = "";
+    }
+  };
+
+  /**
+   * 处理视频上传
+   */
+  const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && onVideoUpload) {
+      // 验证文件类型
+      if (!file.type.startsWith("video/")) {
+        alert("请选择视频文件");
+        return;
+      }
+      // 验证文件大小（最大50MB）
+      if (file.size > 50 * 1024 * 1024) {
+        alert("视频大小不能超过50MB");
+        return;
+      }
+      onVideoUpload(file);
+    }
+    // 重置input值
+    if (e.target) {
+      e.target.value = "";
+    }
+  };
+
+  /**
+   * 处理附件上传
+   */
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && onFileUpload) {
+      // 验证文件大小（最大100MB）
+      if (file.size > 100 * 1024 * 1024) {
+        alert("文件大小不能超过100MB");
+        return;
+      }
+      onFileUpload(file);
+    }
+    // 重置input值
+    if (e.target) {
+      e.target.value = "";
     }
   };
 
@@ -27,7 +115,13 @@ const ChatInput: React.FC<ChatInputProps> = ({ value, onChange, onSend }) => {
       </div>
       <div className="chatbot-input-bottom">
         <div className="chatbot-input-buttons">
-          <button className="input-btn emoji-btn" title="表情">
+          {/* 表情按钮 */}
+          <button
+            ref={emojiButtonRef}
+            className="input-btn emoji-btn emoji-picker-trigger"
+            title="表情"
+            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+          >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
               <circle
                 cx="12"
@@ -48,7 +142,12 @@ const ChatInput: React.FC<ChatInputProps> = ({ value, onChange, onSend }) => {
               />
             </svg>
           </button>
-          <button className="input-btn image-btn" title="图片">
+          {/* 图片上传按钮 */}
+          <button
+            className="input-btn image-btn"
+            title="图片"
+            onClick={() => imageInputRef.current?.click()}
+          >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
               <rect
                 x="3"
@@ -69,8 +168,20 @@ const ChatInput: React.FC<ChatInputProps> = ({ value, onChange, onSend }) => {
                 strokeLinecap="round"
               />
             </svg>
+            <input
+              ref={imageInputRef}
+              type="file"
+              accept="image/*"
+              style={{ display: "none" }}
+              onChange={handleImageUpload}
+            />
           </button>
-          <button className="input-btn video-btn" title="视频">
+          {/* 视频上传按钮 */}
+          <button
+            className="input-btn video-btn"
+            title="视频"
+            onClick={() => videoInputRef.current?.click()}
+          >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
               <rect
                 x="2"
@@ -90,8 +201,20 @@ const ChatInput: React.FC<ChatInputProps> = ({ value, onChange, onSend }) => {
                 strokeLinejoin="round"
               />
             </svg>
+            <input
+              ref={videoInputRef}
+              type="file"
+              accept="video/*"
+              style={{ display: "none" }}
+              onChange={handleVideoUpload}
+            />
           </button>
-          <button className="input-btn attach-btn" title="附件">
+          {/* 附件上传按钮 */}
+          <button
+            className="input-btn attach-btn"
+            title="附件"
+            onClick={() => fileInputRef.current?.click()}
+          >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
               <path
                 d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"
@@ -102,6 +225,12 @@ const ChatInput: React.FC<ChatInputProps> = ({ value, onChange, onSend }) => {
                 strokeLinejoin="round"
               />
             </svg>
+            <input
+              ref={fileInputRef}
+              type="file"
+              style={{ display: "none" }}
+              onChange={handleFileUpload}
+            />
           </button>
         </div>
         <button className="send-btn" onClick={onSend}>
@@ -110,6 +239,14 @@ const ChatInput: React.FC<ChatInputProps> = ({ value, onChange, onSend }) => {
           </svg>
         </button>
       </div>
+      {/* 表情选择器 - 使用 Portal 渲染到 body，固定定位 */}
+      {showEmojiPicker && (
+        <EmojiPicker
+          onSelect={handleEmojiSelect}
+          onClose={() => setShowEmojiPicker(false)}
+          triggerRef={emojiButtonRef}
+        />
+      )}
       <div className="chatbot-input-footer">Powered by SaleSmartly</div>
     </div>
   );
