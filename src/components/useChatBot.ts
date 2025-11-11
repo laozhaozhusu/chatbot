@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Message, TabType } from "./types";
+import type { Message, TabType, MessageContent } from "./types";
 
 /**
  * 生成时间戳
@@ -115,6 +115,144 @@ export const useChatBot = () => {
     }, 1000);
   };
 
+  /**
+   * 将文件转换为Base64 URL
+   */
+  const fileToDataURL = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
+  /**
+   * 处理图片上传
+   */
+  const handleImageUpload = async (file: File) => {
+    try {
+      const timestamp = generateTimestamp();
+      const url = await fileToDataURL(file);
+      
+      const content: MessageContent[] = [
+        {
+          type: "image",
+          url,
+          fileName: file.name,
+          fileSize: file.size,
+        },
+      ];
+
+      const userMessage: Message = {
+        id: messages.length + 1,
+        type: "user",
+        content,
+        timestamp,
+      };
+
+      setMessages((prev) => [...prev, userMessage]);
+
+      // 模拟机器人回复
+      setTimeout(() => {
+        const botReply: Message = {
+          id: messages.length + 2,
+          type: "bot",
+          content: "收到您的图片！",
+          timestamp,
+        };
+        setMessages((prev) => [...prev, botReply]);
+      }, 1000);
+    } catch (error) {
+      console.error("图片上传失败:", error);
+      alert("图片上传失败，请重试");
+    }
+  };
+
+  /**
+   * 处理视频上传
+   */
+  const handleVideoUpload = async (file: File) => {
+    try {
+      const timestamp = generateTimestamp();
+      const url = await fileToDataURL(file);
+      
+      const content: MessageContent[] = [
+        {
+          type: "video",
+          url,
+          fileName: file.name,
+          fileSize: file.size,
+        },
+      ];
+
+      const userMessage: Message = {
+        id: messages.length + 1,
+        type: "user",
+        content,
+        timestamp,
+      };
+
+      setMessages((prev) => [...prev, userMessage]);
+
+      // 模拟机器人回复
+      setTimeout(() => {
+        const botReply: Message = {
+          id: messages.length + 2,
+          type: "bot",
+          content: "收到您的视频！",
+          timestamp,
+        };
+        setMessages((prev) => [...prev, botReply]);
+      }, 1000);
+    } catch (error) {
+      console.error("视频上传失败:", error);
+      alert("视频上传失败，请重试");
+    }
+  };
+
+  /**
+   * 处理附件上传
+   */
+  const handleFileUpload = async (file: File) => {
+    try {
+      const timestamp = generateTimestamp();
+      const url = await fileToDataURL(file);
+      
+      const content: MessageContent[] = [
+        {
+          type: "file",
+          url,
+          fileName: file.name,
+          fileSize: file.size,
+        },
+      ];
+
+      const userMessage: Message = {
+        id: messages.length + 1,
+        type: "user",
+        content,
+        timestamp,
+      };
+
+      setMessages((prev) => [...prev, userMessage]);
+
+      // 模拟机器人回复
+      setTimeout(() => {
+        const botReply: Message = {
+          id: messages.length + 2,
+          type: "bot",
+          content: `收到您的文件：${file.name}`,
+          timestamp,
+        };
+        setMessages((prev) => [...prev, botReply]);
+      }, 1000);
+    } catch (error) {
+      console.error("文件上传失败:", error);
+      alert("文件上传失败，请重试");
+    }
+  };
+
   return {
     messages,
     inputValue,
@@ -123,5 +261,8 @@ export const useChatBot = () => {
     setActiveTab,
     handleSend,
     handleQuickAction,
+    handleImageUpload,
+    handleVideoUpload,
+    handleFileUpload,
   };
 };

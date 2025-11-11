@@ -1,10 +1,26 @@
 /**
+ * 消息内容类型
+ */
+export type MessageContentType = "text" | "image" | "video" | "file";
+
+/**
+ * 消息内容
+ */
+export interface MessageContent {
+  type: MessageContentType;
+  text?: string;
+  url?: string;
+  fileName?: string;
+  fileSize?: number;
+}
+
+/**
  * 消息类型定义
  */
 export interface Message {
   id: number;
   type: "bot" | "user";
-  content: string;
+  content: string | MessageContent[];
   timestamp: string;
 }
 
@@ -52,5 +68,8 @@ export interface ChatInputProps {
   value: string;
   onChange: (value: string) => void;
   onSend: () => void;
+  onImageUpload?: (file: File) => void;
+  onVideoUpload?: (file: File) => void;
+  onFileUpload?: (file: File) => void;
 }
 
