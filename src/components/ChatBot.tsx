@@ -15,7 +15,7 @@ import "../ChatBot.css";
  * - 低耦合：通过props传递数据和回调，组件之间无直接依赖
  * - 单一职责：主组件只负责组装和状态管理
  */
-const ChatBot: React.FC<ChatBotProps> = ({ onClose }) => {
+const ChatBot: React.FC<ChatBotProps> = ({ onClose, onMinimize }) => {
   const {
     messages,
     inputValue,
@@ -35,6 +35,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ onClose }) => {
         activeTab={activeTab}
         onTabChange={setActiveTab}
         onClose={onClose}
+        onMinimize={onMinimize}
       />
       <MessageList messages={messages} onQuickAction={handleQuickAction} />
       <ChatInput

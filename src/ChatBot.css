@@ -55,6 +55,15 @@
   color: white;
 }
 
+.header-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.minimize-btn,
 .close-btn {
   background: none;
   border: none;
@@ -68,6 +77,7 @@
   transition: background 0.2s;
 }
 
+.minimize-btn:hover,
 .close-btn:hover {
   background: rgba(255, 255, 255, 0.2);
 }

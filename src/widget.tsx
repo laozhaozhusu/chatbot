@@ -262,6 +262,10 @@ class ChatBotWidget {
               // 关闭聊天窗口
               this.close();
             }}
+            onMinimize={() => {
+              // 最小化聊天窗口，显示聊天气泡
+              this.close();
+            }}
           />
         </React.StrictMode>
       );

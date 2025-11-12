@@ -34,6 +34,7 @@ export type TabType = "message" | "help";
  */
 export interface ChatBotProps {
   onClose?: () => void;
+  onMinimize?: () => void;
 }
 
 /**
@@ -43,6 +44,7 @@ export interface ChatHeaderProps {
   activeTab: TabType;
   onTabChange: (tab: TabType) => void;
   onClose?: () => void;
+  onMinimize?: () => void;
 }
 
 /**
