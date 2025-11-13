@@ -2,7 +2,7 @@ name: NodeJS with Webpack
 
 on:
   release:
-    types: [published]  # 发布release时触发
+    types: [published] # 发布release时触发
 
 jobs:
   build:
@@ -10,83 +10,82 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x, 22.x]
+        node-version: [22.x]
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
 
-    - name: Extract release tag
-      id: extract_tag
-      run: |
-        # 获取release tag名（去掉v前缀）
-        TAG_NAME=${{ github.event.release.tag_name }}
-        VERSION=${TAG_NAME#v}  # 去掉v前缀，如v1.0.0 -> 1.0.0
-        echo "VERSION=$VERSION" >> $GITHUB_ENV
-        echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
-        echo "RELEASE_NAME=${{ github.event.release.name }}" >> $GITHUB_ENV
-        echo "RELEASE_BODY<<EOF" >> $GITHUB_ENV
-        echo "${{ github.event.release.body }}" >> $GITHUB_ENV
-        echo "EOF" >> $GITHUB_ENV
-    
-    - name: Display release info
-      run: |
-        echo "Release Tag: ${{ env.TAG_NAME }}"
-        echo "Version: ${{ env.VERSION }}"
-        echo "Release Name: ${{ env.RELEASE_NAME }}"
-        echo "Release Body: ${{ env.RELEASE_BODY }}"
-      
-    # 安装pnpm
-    - name: Install pnpm
-      run: npm install --global pnpm
-      
-    # 验证pnpm安装
-    - name: Verify pnpm installation
-      run: pnpm --version
-      
-    # 安装依赖
-    - name: Install dependencies
-      run: pnpm install
-      
-    # 继续其他步骤
-    - name: Build
-      run: pnpm run build
+      - name: Extract release tag
+        id: extract_tag
+        run: |
+          # 获取release tag名（去掉v前缀）
+          TAG_NAME=${{ github.event.release.tag_name }}
+          VERSION=${TAG_NAME#v}  # 去掉v前缀，如v1.0.0 -> 1.0.0
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+          echo "RELEASE_NAME=${{ github.event.release.name }}" >> $GITHUB_ENV
+          echo "RELEASE_BODY<<EOF" >> $GITHUB_ENV
+          echo "${{ github.event.release.body }}" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
-    
-    # 步骤5: 检查构建产物
-    - name: Check build output
-      run: ls -la dist/  # 假设构建输出到dist目录
+      - name: Display release info
+        run: |
+          echo "Release Tag: ${{ env.TAG_NAME }}"
+          echo "Version: ${{ env.VERSION }}"
+          echo "Release Name: ${{ env.RELEASE_NAME }}"
+          echo "Release Body: ${{ env.RELEASE_BODY }}"
 
-    - name: Rename build artifacts with version
-      run: |
-        # 假设构建输出到dist目录
-        cd dist
-        mkdir -p v${{ env.VERSION }}/ && find . -mindepth 1 -maxdepth 1 -not -name "v${{ env.VERSION }}" -exec cp -r {} v${{ env.VERSION }}/ \;
-        cd ..
-      
-    
-    # 步骤6: 部署到GitHub Pages分支
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v4
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./dist  # 构建输出目录
-        publish_branch: gh-pages  # 部署到gh-pages分支
-        force_orphan: true  # 强制创建孤立分支
-    
-    # 步骤7: 等待CDN缓存更新
-    - name: Wait for CDN propagation
-      run: sleep 30  # 等待30秒让CDN缓存更新
-    
-    # 步骤8: 验证部署
-    - name: Verify deployment
-      run: |
-        echo "✅ Deployment completed successfully!"
-        echo "📦 Your files are available at:"
-        echo "   https://cdn.jsdelivr.net/gh/${{ github.repository }}@gh-pages/"
-        echo "   https://cdn.jsdelivr.net/gh/${{ github.repository }}@gh-pages/index.html"
-        echo "   https://cdn.jsdelivr.net/gh/${{ github.repository }}@gh-pages/assets/main.js"
+      # 安装pnpm
+      - name: Install pnpm
+        run: npm install --global pnpm
+
+      # 验证pnpm安装
+      - name: Verify pnpm installation
+        run: pnpm --version
+
+      # 安装依赖
+      - name: Install dependencies
+        run: pnpm install
+
+      # 继续其他步骤
+      - name: Build
+        run: pnpm run build
+
+      # 步骤5: 检查构建产物
+      - name: Check build output
+        run: ls -la dist/ # 假设构建输出到dist目录
+
+      - name: Rename build artifacts with version
+        run: |
+          # 假设构建输出到dist目录
+          cd dist
+          mkdir -p v${{ env.VERSION }}/ && find . -mindepth 1 -maxdepth 1 -not -name "v${{ env.VERSION }}" -exec cp -r {} v${{ env.VERSION }}/ \;
+          cd ..
+
+      # 步骤6: 部署到GitHub Pages分支
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist # 构建输出目录
+          publish_branch: v${{ env.VERSION }}
+
+      # 步骤7: 等待CDN缓存更新
+      - name: Wait for CDN propagation
+        run: sleep 30 # 等待30秒让CDN缓存更新
+
+      # 步骤8: 验证部署
+      - name: Verify deployment
+        run: |
+          echo "✅ Deployment completed successfully!"
+          echo "📦 Your files are available at:"
+          for item in * .*; do
+            if [ "$item" != "v${{ env.VERSION }}" ] && [ "$item" != "." ] && [ "$item" != ".." ]; then
+                echo "   https://cdn.jsdelivr.net/gh/${{ github.repository }}@v${{ env.VERSION }}/$item"
+            fi
+            done
