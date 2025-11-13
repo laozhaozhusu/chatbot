@@ -67,6 +67,7 @@ jobs:
         cd dist
         mkdir -p "v${{ env.VERSION }}"
         cp -r * "v${{ env.VERSION }}/"
+        mkdir -p "v${{ env.VERSION }}/" && find . -mindepth 1 -maxdepth 1 -not -name "v${{ env.VERSION }}/" -exec cp -r {} v${{ env.VERSION }}/ \;
         cd ..
       
     
