@@ -64,7 +64,7 @@ jobs:
         run: |
           # 假设构建输出到dist目录
           cd dist
-          mkdir -p v${{ env.VERSION }}/ && find . -mindepth 1 -maxdepth 1 -not -name "v${{ env.VERSION }}" -exec cp -r {} v${{ env.VERSION }}/ \;
+          mkdir -p v${{ env.VERSION }}/ && find . -mindepth 1 -maxdepth 1 -not -name "v${{ env.VERSION }}" -exec mv {} v${{ env.VERSION }}/ \;
           cd ..
 
       # 步骤6: 部署到GitHub Pages分支
