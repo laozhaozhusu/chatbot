@@ -21,9 +21,18 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-
+    # 安装pnpm
+    - name: Install pnpm
+      run: npm install --global pnpm
+      
+    # 验证pnpm安装
+    - name: Verify pnpm installation
+      run: pnpm --version
+      
+    # 安装依赖
+    - name: Install dependencies
+      run: pnpm install
+      
+    # 继续其他步骤
     - name: Build
-      run: |
-        npm install --save-dev pnpm
-        pnpm install
-        pnpm run build
+      run: pnpm run build
